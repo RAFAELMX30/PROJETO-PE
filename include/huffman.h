@@ -6,44 +6,38 @@
 
 #define HUFF_SIMBOLOS 256
 
-/* Nó da árvore de Huffman.
- * Folha: esq == NULL e dir == NULL; o campo "byte" guarda o símbolo.
- * Convenção dos bits: 0 = esquerda, 1 = direita. */
+/* no da arvore de Huffman
+   folha = esq e dir NULL
+   bit 0 vai pra esquerda, bit 1 pra direita */
 struct HuffNode {
-    unsigned char byte;     /* símbolo (válido só nas folhas)             */
-    uint64_t freq;          /* frequência do símbolo ou soma dos filhos   */
-    int ordem;              /* desempate no heap (árvore determinística)  */
+    unsigned char byte; /* so vale nas folhas */
+    uint64_t freq;
+    int ordem; /* desempate no heap */
     struct HuffNode *esq;
     struct HuffNode *dir;
 };
 typedef struct HuffNode HuffNode;
 
-/* Código de um byte: bits[i] vale 0 ou 1; tam = quantidade de bits.
- * tam == 0 significa que o byte não aparece no arquivo. */
+/* codigo de um byte (tam = 0 se o byte nao aparece) */
 typedef struct {
     unsigned char bits[HUFF_SIMBOLOS];
     int tam;
 } HuffCodigo;
 
-/* Soma ao vetor freq a contagem dos n bytes de buf.
- * Zere freq antes da primeira chamada; pode ser chamada por blocos. */
+/* conta quantas vezes cada byte aparece (freq tem que comecar zerado) */
 void huff_contar_freq(const unsigned char *buf, size_t n, uint64_t freq[HUFF_SIMBOLOS]);
 
-/* Monta a árvore a partir das frequências.
- * - Arquivo vazio (todas as frequências 0): retorna NULL.
- * - Um único byte distinto: a raiz é um nó interno com a folha à
- *   esquerda, então o código desse byte é "0".
- * Mesmas frequências geram sempre a mesma árvore.
- * Retorna NULL também se faltar memória (confira se freq não era tudo 0). */
+/* monta a arvore, retorna NULL se o arquivo for vazio
+   se so tiver 1 byte diferente, o codigo dele vira "0" */
 HuffNode *huff_construir_arvore(const uint64_t freq[HUFF_SIMBOLOS]);
 
-/* Preenche codigos[0..255] percorrendo a árvore (raiz pode ser NULL). */
+/* preenche o codigo de cada byte percorrendo a arvore */
 void huff_gerar_codigos(const HuffNode *raiz, HuffCodigo codigos[HUFF_SIMBOLOS]);
 
-/* Retorna 1 se o nó for folha, 0 caso contrário. */
+/* retorna 1 se o no for folha */
 int huff_eh_folha(const HuffNode *no);
 
-/* Libera toda a árvore (aceita NULL). */
+/* libera a arvore inteira */
 void huff_liberar_arvore(HuffNode *raiz);
 
 #endif
