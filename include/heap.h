@@ -3,25 +3,25 @@
 
 struct HuffNode;
 
+/* fila de prioridade (min-heap) com os nos da arvore */
 typedef struct {
     struct HuffNode **dados;
     int tamanho;
     int capacidade;
 } MinHeap;
 
-/* Cria um heap vazio com a capacidade dada. Retorna NULL se faltar memória. */
+/* cria um heap vazio */
 MinHeap *heap_criar(int capacidade);
 
-/* Libera o heap (não libera os nós que estiverem dentro dele). */
+/* libera o heap, mas nao os nos */
 void heap_destruir(MinHeap *h);
 
-/* Insere um nó. Retorna 1 em sucesso, 0 se o heap estiver cheio. */
+/* retorna 0 se estiver cheio */
 int heap_inserir(MinHeap *h, struct HuffNode *no);
 
-/* Remove e retorna o menor nó. Retorna NULL se o heap estiver vazio. */
+/* remove o menor no (NULL se estiver vazio) */
 struct HuffNode *heap_remover_min(MinHeap *h);
 
-/* Quantidade de nós no heap. */
 int heap_tamanho(const MinHeap *h);
 
 #endif
