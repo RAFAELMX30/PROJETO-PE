@@ -33,7 +33,7 @@ void huff_liberar_arvore(HuffNode *raiz) {
     free(raiz);
 }
 
-/* Esvazia o heap liberando as subárvores que sobraram (caso de erro). */
+/* se der erro de malloc, libera o que sobrou no heap */
 static void liberar_heap_com_nos(MinHeap *h) {
     HuffNode *no;
     while ((no = heap_remover_min(h)) != NULL)
@@ -45,7 +45,7 @@ HuffNode *huff_construir_arvore(const uint64_t freq[HUFF_SIMBOLOS]) {
     MinHeap *h;
     HuffNode *a, *b, *pai, *raiz;
     int i;
-    int prox_ordem = HUFF_SIMBOLOS; /* folhas usam ordem = byte; internos 256, 257, ... */
+    int prox_ordem = HUFF_SIMBOLOS; /* folha: ordem = byte, no interno: 256 pra frente */
 
     h = heap_criar(HUFF_SIMBOLOS);
     if (h == NULL)
@@ -69,7 +69,7 @@ HuffNode *huff_construir_arvore(const uint64_t freq[HUFF_SIMBOLOS]) {
         return NULL;
     }
 
-    /* um único byte distinto: raiz interna com a folha à esquerda (código "0") */
+    /* so 1 byte diferente: cria uma raiz com ele na esquerda */
     if (heap_tamanho(h) == 1) {
         a = heap_remover_min(h);
         heap_destruir(h);
@@ -79,7 +79,7 @@ HuffNode *huff_construir_arvore(const uint64_t freq[HUFF_SIMBOLOS]) {
         return raiz;
     }
 
-    /* junta sempre os dois menores até sobrar só a raiz */
+    /* junta os 2 menores ate sobrar 1 */
     while (heap_tamanho(h) > 1) {
         a = heap_remover_min(h);
         b = heap_remover_min(h);
