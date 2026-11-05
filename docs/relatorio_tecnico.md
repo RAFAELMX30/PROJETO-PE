@@ -8,11 +8,11 @@
 # RELATÓRIO TÉCNICO DE IMPLEMENTAÇÃO
 ## GarchY: Compactador e Descompactador Huffman em ANSI C
 
-### Integrantes da Equipe e Responsabilidades:
-* **Integrante 1 (jrfeltran):** Implementação da fila de prioridade Min-Heap, construção da árvore de Huffman e geração dos códigos binários prefixados.
-* **Integrante 2 (RAFAELMX30):** Implementação da manipulação de bits (BitStream), serialização do cabeçalho compacto com codificação varint e rotina de compressão em duas passadas.
-* **Integrante 3 (CWAF-Renan):** Implementação da rotina de descompressão bit a bit e algoritmo de integridade por checksum CRC-32 (IEEE 802.3).
-* **Integrante 4 (Rodrigo Araújo — Martter):** Implementação do menu interativo no terminal, tratamento e normalização de caminhos de arquivos, instrumentação de métricas temporais e espaciais, execução da suíte de testes comparativos contra o gzip, elaboração do leia-me.txt e redação deste Relatório Técnico.
+### Integrantes da Equipe (Discentes):
+* **José Ricardo Feltran Júnior (RA: 11202421133) — Integrante 1:** Implementação da fila de prioridade Min-Heap, construção da árvore de Huffman e geração dos códigos binários prefixados.
+* **Rafael Maximiano Luiz (RA: 11202432420) — Integrante 2:** Implementação da manipulação de bits (BitStream), serialização do cabeçalho compacto com codificação varint e rotina de compressão em duas passadas.
+* **Renan Henrique Ferreira Monteiro (RA: 11202020303) — Integrante 3:** Implementação da rotina de descompressão bit a bit e algoritmo de integridade por checksum CRC-32 (IEEE 802.3).
+* **Rodrigo Martel Poggi de Araújo (RA: 11202522393) — Integrante 4:** Implementação do menu interativo no terminal, tratamento e normalização de caminhos de arquivos, instrumentação de métricas temporais e espaciais, execução da suíte de testes comparativos contra o gzip, elaboração do leia-me.txt e redação deste Relatório Técnico.
 
 ---
 
@@ -134,8 +134,7 @@ O programa foi testado sob três cenários de redundância com arquivos de **500
 ---
 
 ## 5. Participação e Entregas Individuais da Equipe
-
-* **Integrante 1 (jrfeltran):** TAD Min-Heap, Árvore de Huffman e geração de códigos prefixados (`heap.c`, `huffman.c`).
-* **Integrante 2 (RAFAELMX30):** TAD BitStream, formato de cabeçalho compacto varint e rotina de compressão em 2 passadas (`bitio.c`, `cabecalho.c`, `compressao.c`).
-* **Integrante 3 (CWAF-Renan):** Rotina de descompressão bit a bit e algoritmo de integridade por checksum CRC-32 (`descompressao.c`, `checksum.c`).
-* **Integrante 4 (Rodrigo Araújo — Martter):** Menu interativo no terminal (`main.c`), normalização de caminhos de arquivos, cronometragem com `clock()`, suíte de testes comparativos contra o gzip (`benchmark_gzip.py`), instruções de compilação no `leia-me.txt` e redação deste Relatório Técnico.
+* **José Ricardo Feltran Júnior (RA: 11202421133) — Integrante 1:** TAD Min-Heap, Árvore de Huffman e geração de códigos prefixados (`heap.c`, `huffman.c`).
+* **Rafael Maximiano Luiz (RA: 11202432420) — Integrante 2:** TAD BitStream, formato de cabeçalho compacto varint e rotina de compressão em 2 passadas (`bitio.c`, `cabecalho.c`, `compressao.c`).
+* **Renan Henrique Ferreira Monteiro (RA: 11202020303) — Integrante 3:** Rotina de descompressão bit a bit e algoritmo de integridade por checksum CRC-32 (`descompressao.c`, `checksum.c`).
+* **Rodrigo Martel Poggi de Araújo (RA: 11202522393) — Integrante 4:** Menu interativo no terminal (`main.c`), normalização de caminhos de arquivos, cronometragem com `clock()`, suíte de testes comparativos contra o gzip (`benchmark_gzip.py`), instruções de compilação no `leia-me.txt` e redação deste Relatório Técnico.

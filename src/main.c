@@ -457,11 +457,11 @@ static void exibir_sobre(void) {
     printf(" Quadrimestre: 2026.3\n");
     printf(" Professores: Roberto Sadao Yokoyama\n");
     printf("              Luneque Del Rio de Souza e Silva Junior\n\n");
-    printf(" Divisao da Equipe:\n");
-    printf("  * Integrante 1: Min-heap, Arvore de Huffman e Codigos\n");
-    printf("  * Integrante 2: Leitura/Escrita de bits, Cabecalho e Compressao\n");
-    printf("  * Integrante 3: Descompressao e Integridade por Checksum CRC-32\n");
-    printf("  * Integrante 4: Menu interativo, Caminhos, Metricas, Testes e Relatorio\n");
+    printf(" Equipe (Discentes):\n");
+    printf("  * Jose Ricardo Feltran Junior (RA: 11202421133) - Integrante 1\n");
+    printf("  * Rafael Maximiano Luiz (RA: 11202432420) - Integrante 2\n");
+    printf("  * Renan Henrique Ferreira Monteiro (RA: 11202020303) - Integrante 3\n");
+    printf("  * Rodrigo Martel Poggi de Araujo (RA: 11202522393) - Integrante 4\n");
     printf("=======================================================\n");
     pausar();
 }

@@ -22,13 +22,17 @@ Diferenciais implementados:
   - Teste de integridade automatizado (Roundtrip) byte a byte.
 
 
-2. DIVISÃO DA EQUIPE E RESPONSABILIDADES
-----------------------------------------
-- Integrante 1: Implementação do min-heap, construção da árvore de Huffman e geração dos códigos.
-- Integrante 2: Implementação da escrita e leitura de bits, do cabeçalho e da rotina de compressão.
-- Integrante 3: Implementação da descompressão e da verificação de integridade por checksum CRC-32.
-- Integrante 4: Implementação do menu, tratamento de caminhos, medição de tempo e tamanho,
-                testes comparativos com gzip e relatório técnico.
+2. INTEGRANTES DA EQUIPE (DISCENTES) E RESPONSABILIDADES
+---------------------------------------------------------
+- José Ricardo Feltran Júnior (RA: 11202421133) — Integrante 1:
+    Implementação do min-heap, construção da árvore de Huffman e geração dos códigos.
+- Rafael Maximiano Luiz (RA: 11202432420) — Integrante 2:
+    Implementação da escrita e leitura de bits, do cabeçalho e da rotina de compressão.
+- Renan Henrique Ferreira Monteiro (RA: 11202020303) — Integrante 3:
+    Implementação da descompressão e da verificação de integridade por checksum CRC-32.
+- Rodrigo Martel Poggi de Araújo (RA: 11202522393) — Integrante 4:
+    Implementação do menu, tratamento de caminhos, medição de tempo e tamanho,
+    testes comparativos com gzip e relatório técnico.
 
 
 3. REQUISITOS DE COMPILAÇÃO

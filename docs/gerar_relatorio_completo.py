@@ -56,19 +56,19 @@ def criar_relatorio():
     pdf.set_fill_color(245, 248, 252)
     pdf.set_draw_color(210, 225, 240)
     pdf.set_line_width(0.3)
-    pdf.rect(20, pdf.get_y(), 170, 24, "DF")
+    pdf.rect(20, pdf.get_y(), 170, 27, "DF")
     
     pdf.set_xy(25, pdf.get_y() + 3)
     pdf.set_font("Helvetica", "B", 9)
     pdf.set_text_color(25, 45, 85)
-    pdf.cell(0, 5, "INTEGRANTES DA EQUIPE E REPOSITORIO:", ln=True)
+    pdf.cell(0, 5, "INTEGRANTES DA EQUIPE (DISCENTES):", ln=True)
     pdf.set_font("Helvetica", "", 8.5)
     pdf.set_text_color(50, 50, 50)
-    pdf.cell(0, 4.5, "- Integrante 1 (jrfeltran): Min-Heap, Arvore de Huffman e Geracao de Codigos", ln=True)
-    pdf.cell(0, 4.5, "- Integrante 2 (RAFAELMX30): BitStream, Cabecalho Compacto e Rotina de Compressao", ln=True)
-    pdf.cell(0, 4.5, "- Integrante 3 (CWAF-Renan): Rotina de Descompressao e Integridade CRC-32", ln=True)
-    pdf.cell(0, 4.5, "- Integrante 4 (Rodrigo Araujo - Martter): Menu, Tratamento de Caminhos, Metricas e Relatorio", ln=True)
-    pdf.ln(8)
+    pdf.cell(0, 4.5, "- Jose Ricardo Feltran Junior (RA: 11202421133) - Integrante 1", ln=True)
+    pdf.cell(0, 4.5, "- Rafael Maximiano Luiz (RA: 11202432420) - Integrante 2", ln=True)
+    pdf.cell(0, 4.5, "- Renan Henrique Ferreira Monteiro (RA: 11202020303) - Integrante 3", ln=True)
+    pdf.cell(0, 4.5, "- Rodrigo Martel Poggi de Araujo (RA: 11202522393) - Integrante 4", ln=True)
+    pdf.ln(10)
 
     # Helpers de formatacao
     def titulo_secao(num, texto):
@@ -179,7 +179,7 @@ def criar_relatorio():
         "(TADs), distribuido em arquivos de cabecalho (.h em include/) e implementacoes (.c em src/)."
     )
 
-    titulo_subsecao("3.1 TAD Min-Heap e Arvore de Huffman (Integrante 1)")
+    titulo_subsecao("3.1 TAD Min-Heap e Arvore de Huffman (Jose Ricardo Feltran Junior)")
     corpo(
         "O Min-Heap foi implementado sobre um vetor de ponteiros com capacidade fixa de 256 elementos (quantidade maxima de simbolos). "
         "O gerenciamento de memoria e rigoroso: cada malloc e acompanhado de verificacao de ponteiro nulo e a arvore e totalmente "
@@ -194,7 +194,7 @@ def criar_relatorio():
         "}"
     ])
 
-    titulo_subsecao("3.2 BitStream e Serializacao Compacta do Cabecalho (Integrante 2)")
+    titulo_subsecao("3.2 BitStream e Serializacao Compacta do Cabecalho (Rafael Maximiano Luiz)")
     corpo(
         "Como os codigos de Huffman possuem comprimentos fracionarios de byte, implementou-se o BitWriter e BitReader, que "
         "acumulam bits em buffers de 1 byte enviados ao disco quando cheios (MSB primeiro). O cabecalho .abcz armazena a assinatura "
@@ -215,7 +215,7 @@ def criar_relatorio():
         "}"
     ])
 
-    titulo_subsecao("3.3 Rotinas de Compressao e Descompressao em 2 Passadas (Integrantes 2 e 3)")
+    titulo_subsecao("3.3 Rotinas de Compressao e Descompressao (Rafael M. Luiz e Renan H. F. Monteiro)")
     corpo(
         "Para nao comprometer a memoria RAM em arquivos extensos, a compressao opera em blocos de 64 KB (TAM_BLOCO) e faz "
         "duas passadas sobre o arquivo original: na 1a passada le os blocos, conta frequencias e calcula o CRC-32; em seguida constroi "
@@ -227,7 +227,7 @@ def criar_relatorio():
         "tamanho original registrado no cabecalho e alcancado, descartando quaisquer bits de preenchimento (padding) do ultimo byte."
     )
 
-    titulo_subsecao("3.4 Menu, Tratamento de Caminhos e Metricas (Integrante 4)")
+    titulo_subsecao("3.4 Menu, Tratamento de Caminhos e Metricas (Rodrigo Martel Poggi de Araujo)")
     corpo(
         "O modulo principal (src/main.c) fornece a camada de interacao com o usuario. A funcao normalizar_caminho() remove "
         "espacos e aspas duplas adicionadas automaticamente pelo terminal ao arrastar arquivos. A contagem de tempo emprega "
@@ -324,14 +324,14 @@ def criar_relatorio():
     # =========================================================================
     titulo_secao("5", "PARTICIPACAO E ENTREGAS INDIVIDUAIS DOS INTEGRANTES")
     corpo(
-        "O trabalho foi dividido em 4 frentes complementares e cooperativas, conforme registrado no repositrio oficial do projeto:\n\n"
-        "- Integrante 1 (jrfeltran): Implementacao da fila de prioridade Min-Heap (heap.c/heap.h), construcao da arvore binaria de Huffman "
+        "O trabalho foi dividido em 4 frentes complementares e cooperativas, com as seguintes responsabilidades individuais:\n\n"
+        "- Jose Ricardo Feltran Junior (RA: 11202421133): Implementacao da fila de prioridade Min-Heap (heap.c/heap.h), construcao da arvore binaria de Huffman "
         "com desempate deterministico e algoritmo de geracao dos codigos binarios de tamanho variavel (huffman.c/huffman.h).\n"
-        "- Integrante 2 (RAFAELMX30): Implementacao do leitor e escritor serial de bits BitStream (bitio.c/bitio.h), formato de cabecalho "
+        "- Rafael Maximiano Luiz (RA: 11202432420): Implementacao do leitor e escritor serial de bits BitStream (bitio.c/bitio.h), formato de cabecalho "
         "compacto com codificacao varint (cabecalho.c/cabecalho.h) e rotina de compressao em duas passadas (compressao.c/compressao.h).\n"
-        "- Integrante 3 (CWAF-Renan): Implementacao da rotina de descompressao bit a bit com reconstrucao automatica da arvore "
+        "- Renan Henrique Ferreira Monteiro (RA: 11202020303): Implementacao da rotina de descompressao bit a bit com reconstrucao automatica da arvore "
         "(descompressao.c/descompressao.h) e algoritmo de verificacao de integridade por checksum CRC-32 IEEE 802.3 (checksum.c/checksum.h).\n"
-        "- Integrante 4 (Rodrigo Araujo - Martter): Implementacao do menu interativo no terminal (main.c), normalizacao e validacao de "
+        "- Rodrigo Martel Poggi de Araujo (RA: 11202522393): Implementacao do menu interativo no terminal (main.c), normalizacao e validacao de "
         "caminhos de arquivos, medicao de tempo com clock() e calculo de taxas, execucao da suite de testes comparativos contra o gzip, "
         "elaboracao do leia-me.txt, regras de compilacao no Makefile e redacao deste Relatorio Tecnico."
     )
