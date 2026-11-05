@@ -1,0 +1,20 @@
+# Executáveis
+*.exe
+garchy
+comprimir_cli
+descomprimir_cli
+
+# Arquivos temporários e de compilação
+*.o
+*.obj
+*.abcz
+*.recuperado
+*.__temp_teste*
+*.gz
+*.rec_huff
+*.rec_gz
+
+# Diretórios de build e testes gerados
+build/
+bin/
+tests/cenarios/
