@@ -33,11 +33,11 @@ Linux:    ./projetoPE
 Windows:  projetoPE.exe
 
 Menu:
-  1) Comprimir arquivo (gera .abcz)
-  2) Descomprimir arquivo .abcz
-  3) Ver a tabela de codigos de Huffman de um arquivo
-  4) Testar arquivo (comprime, descomprime e compara com o original)
-  5) Sobre o projeto e a equipe
+  1) Comprimir arquivo (.abcz)
+  2) Descomprimir arquivo (.abcz)
+  3) Visualizar tabela de codigos de Huffman
+  4) Testar arquivo (comprime, descomprime e compara)
+  5) Sobre o projeto e equipe
   0) Sair
 
 Os caminhos podem ser relativos ou absolutos. O arquivo original nunca e
