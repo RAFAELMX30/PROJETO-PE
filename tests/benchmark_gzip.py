@@ -1,9 +1,16 @@
 import os
+import shutil
 import time
 import gzip
 import random
 import subprocess
 import hashlib
+
+EXT = ".exe" if os.name == "nt" else ""
+EXE_COMP = os.path.join(".", "comprimir_cli" + EXT)
+EXE_DESC = os.path.join(".", "descomprimir_cli" + EXT)
+# usa o gzip do sistema se existir (Linux); senao o modulo gzip do Python
+GZIP_CLI = shutil.which("gzip")
 
 DIRETORIO_TESTES = "tests/cenarios"
 os.makedirs(DIRETORIO_TESTES, exist_ok=True)
@@ -12,14 +19,14 @@ os.makedirs(DIRETORIO_TESTES, exist_ok=True)
 TAMANHO_ARQUIVO = 500 * 1024 # 500 KB
 
 def gerar_cenario_alta(caminho):
-    # Padrão repetitivo (ex: genoma / DNA com padrões curtos muito frequentes)
+    # trecho curto repetido ate completar o tamanho
     padrao = b"ATGCATGCATGCATGCATGC_UFABC_2026_REDUNDANCIA_ALTA_"
     conteudo = (padrao * ((TAMANHO_ARQUIVO // len(padrao)) + 1))[:TAMANHO_ARQUIVO]
     with open(caminho, "wb") as f:
         f.write(conteudo)
 
 def gerar_cenario_media(caminho):
-    # Texto em linguagem natural com vocabulário típico (distribuição zipfiana/natural)
+    # frases sorteadas de uma lista pequena
     frases = [
         b"A disciplina de Programacao Estruturada na UFABC aborda Tipos Abstratos de Dados.\n",
         b"O algoritmo de Huffman constroi uma arvore binaria utilizando uma fila de prioridade min-heap.\n",
@@ -55,9 +62,7 @@ def executar_benchmark():
         ("Baixa Redundancia", os.path.join(DIRETORIO_TESTES, "cenario_baixa.bin"), gerar_cenario_baixa),
     ]
 
-    print("==================================================================================")
-    print("       BENCHMARK DE COMPRESSAO: HUFFMAN (projetoPE) vs GZIP (Comercial)              ")
-    print("==================================================================================")
+    print("Comparacao projetoPE (Huffman) x gzip")
 
     resultados = []
 
@@ -73,12 +78,12 @@ def executar_benchmark():
 
         # --- HUFFMAN (projetoPE) ---
         t0 = time.perf_counter()
-        subprocess.run(["./comprimir_cli.exe", caminho, caminho_abcz], check=True, stdout=subprocess.DEVNULL)
+        subprocess.run([EXE_COMP, caminho, caminho_abcz], check=True, stdout=subprocess.DEVNULL)
         t_comp_huff = time.perf_counter() - t0
         tam_abcz = os.path.getsize(caminho_abcz)
 
         t0 = time.perf_counter()
-        subprocess.run(["./descomprimir_cli.exe", caminho_abcz, caminho_rec_huff], check=True, stdout=subprocess.DEVNULL)
+        subprocess.run([EXE_DESC, caminho_abcz, caminho_rec_huff], check=True, stdout=subprocess.DEVNULL)
         t_decomp_huff = time.perf_counter() - t0
 
         hash_rec_huff = calcular_sha256(caminho_rec_huff)
@@ -86,14 +91,22 @@ def executar_benchmark():
 
         # --- GZIP (Deflate: LZ77 + Huffman) ---
         t0 = time.perf_counter()
-        with open(caminho, "rb") as f_in, gzip.open(caminho_gz, "wb") as f_out:
-            f_out.writelines(f_in)
+        if GZIP_CLI:
+            with open(caminho_gz, "wb") as f_out:
+                subprocess.run([GZIP_CLI, "-c", caminho], check=True, stdout=f_out)
+        else:
+            with open(caminho, "rb") as f_in, gzip.open(caminho_gz, "wb") as f_out:
+                f_out.writelines(f_in)
         t_comp_gz = time.perf_counter() - t0
         tam_gz = os.path.getsize(caminho_gz)
 
         t0 = time.perf_counter()
-        with gzip.open(caminho_gz, "rb") as f_in, open(caminho_rec_gz, "wb") as f_out:
-            f_out.writelines(f_in)
+        if GZIP_CLI:
+            with open(caminho_rec_gz, "wb") as f_out:
+                subprocess.run([GZIP_CLI, "-dc", caminho_gz], check=True, stdout=f_out)
+        else:
+            with gzip.open(caminho_gz, "rb") as f_in, open(caminho_rec_gz, "wb") as f_out:
+                f_out.writelines(f_in)
         t_decomp_gz = time.perf_counter() - t0
 
         hash_rec_gz = calcular_sha256(caminho_rec_gz)
@@ -123,18 +136,18 @@ def executar_benchmark():
         })
 
     # Imprimir tabela comparativa
-    print("\n| Cenário | Tam. Original | Huffman Tam. | Huffman Razão | Huffman Redução | Gzip Tam. | Gzip Razão | Gzip Redução | Integridade |")
-    print("|---|---|---|---|---|---|---|---|---|")
+    print()
+    print("%-18s %10s %10s %7s %10s %7s  %s" % ("cenario", "original", "huffman", "R", "gzip", "R", "integridade"))
     for r in resultados:
-        print(f"| **{r['nome']}** | {r['tam_orig']:,} B | {r['tam_abcz']:,} B | {r['razao_huff']:.4f} | {r['red_huff']:.2f}% | {r['tam_gz']:,} B | {r['razao_gz']:.4f} | {r['red_gz']:.2f}% | {'[OK]' if r['integro_huff'] else '[FALHOU]'} |")
+        print("%-18s %10d %10d %7.4f %10d %7.4f  %s" % (r['nome'], r['tam_orig'], r['tam_abcz'], r['razao_huff'],
+              r['tam_gz'], r['razao_gz'], "ok" if r['integro_huff'] else "FALHOU"))
 
-    print("\n| Cenário | Tempo Comp. Huffman | Tempo Comp. Gzip | Tempo Decomp. Huffman | Tempo Decomp. Gzip |")
-    print("|---|---|---|---|---|")
+    print()
+    print("tempos em ms:")
+    print("%-18s %12s %12s %12s %12s" % ("cenario", "comp huff", "comp gzip", "desc huff", "desc gzip"))
     for r in resultados:
-        print(f"| **{r['nome']}** | {r['t_comp_huff']*1000:.2f} ms | {r['t_comp_gz']*1000:.2f} ms | {r['t_decomp_huff']*1000:.2f} ms | {r['t_decomp_gz']*1000:.2f} ms |")
-
-    print("\n==================================================================================")
-    print("Benchmark concluido com sucesso!")
+        print("%-18s %12.2f %12.2f %12.2f %12.2f" % (r['nome'], r['t_comp_huff'] * 1000, r['t_comp_gz'] * 1000,
+              r['t_decomp_huff'] * 1000, r['t_decomp_gz'] * 1000))
 
 if __name__ == "__main__":
     executar_benchmark()
