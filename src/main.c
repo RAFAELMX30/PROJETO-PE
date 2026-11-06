@@ -14,7 +14,7 @@
 #define MAX_CAMINHO 1024
 #define TAM_BLOCO   65536
 
-/* Limpa caracteres de quebra de linha (\r e \n) e remove aspas ao redor */
+/* tira espacos, \r\n e aspas do caminho digitado (ex: arquivo arrastado no terminal) */
 static void normalizar_caminho(char *destino, const char *origem, size_t max_tam) {
     size_t len;
     const char *inicio = origem;
@@ -33,7 +33,7 @@ static void normalizar_caminho(char *destino, const char *origem, size_t max_tam
         fim--;
     }
 
-    /* Se estiver envolto em aspas duplas ou simples, remove */
+    /* aspas duplas ou simples em volta */
     if (*inicio == '\"' && *fim == '\"' && fim > inicio) {
         inicio++;
         fim--;
@@ -50,17 +50,15 @@ static void normalizar_caminho(char *destino, const char *origem, size_t max_tam
     destino[len] = '\0';
 }
 
-/* Leitura segura de string do teclado */
 static int ler_linha(char *buffer, size_t tam) {
     if (fgets(buffer, (int)tam, stdin) == NULL)
         return 0;
 
-    /* Remove quebra de linha final */
     buffer[strcspn(buffer, "\r\n")] = '\0';
     return 1;
 }
 
-/* Formata tamanho em Bytes para exibição legível (B, KB, MB) */
+/* tamanho em bytes, com KB/MB entre parenteses quando for grande */
 static void formatar_bytes(uint64_t bytes, char *saida, size_t max_tam) {
     if (bytes < 1024) {
         snprintf(saida, max_tam, "%" PRIu64 " B", bytes);
@@ -71,15 +69,14 @@ static void formatar_bytes(uint64_t bytes, char *saida, size_t max_tam) {
     }
 }
 
-/* Pausa amigável */
 static void pausar(void) {
-    printf("\nPressione [ENTER] para continuar...");
-    while (getchar() != '\n');
+    int c;
+    printf("\nENTER para continuar...");
+    while ((c = getchar()) != '\n' && c != EOF)
+        ;
 }
 
-/* =========================================================================
- * 1) COMPRESSÃO DE ARQUIVO
- * ========================================================================= */
+/* 1) compressao de arquivo */
 static void executar_compressao(void) {
     char entrada_raw[MAX_CAMINHO], entrada[MAX_CAMINHO];
     char saida_raw[MAX_CAMINHO], saida[MAX_CAMINHO];
@@ -111,7 +108,7 @@ static void executar_compressao(void) {
     }
     fclose(teste);
 
-    /* Sugere nome padrão adicionando .abcz */
+    /* padrao: mesmo nome + .abcz */
     printf("\nInforme o caminho do arquivo de saida (ou pressione ENTER para \"%s.abcz\"):\n> ", entrada);
     if (!ler_linha(saida_raw, sizeof(saida_raw))) return;
     normalizar_caminho(saida, saida_raw, sizeof(saida));
@@ -129,7 +126,7 @@ static void executar_compressao(void) {
     tempo_s = (double)(fim - inicio) / CLOCKS_PER_SEC;
 
     if (ret != COMP_OK) {
-        printf("\n[FALHA] Erro na compressao: %s (codigo %d)\n", comp_mensagem_erro(ret), ret);
+        printf("\nErro na compressao: %s (codigo %d)\n", comp_mensagem_erro(ret), ret);
     } else {
         char str_orig[64], str_comp[64];
         double razao = (res.tam_original > 0) ? (double)res.tam_comprimido / (double)res.tam_original : 1.0;
@@ -139,7 +136,7 @@ static void executar_compressao(void) {
         formatar_bytes(res.tam_comprimido, str_comp, sizeof(str_comp));
 
         printf("\n=======================================================\n");
-        printf("           RESULTADO DA COMPRESSAO COM SUCESSO!        \n");
+        printf("                  COMPRESSAO CONCLUIDA             \n");
         printf("=======================================================\n");
         printf("  Arquivo original   : %s\n", entrada);
         printf("  Tamanho original   : %s\n", str_orig);
@@ -153,19 +150,13 @@ static void executar_compressao(void) {
         }
         printf("  Checksum CRC-32    : 0x%08" PRIX32 "\n", res.checksum);
         printf("  Tempo de execucao  : %.4f segundos (%.2f ms)\n", tempo_s, tempo_s * 1000.0);
-        if (tempo_s > 0.00001 && res.tam_original > 0) {
-            double mb_s = ((double)res.tam_original / (1024.0 * 1024.0)) / tempo_s;
-            printf("  Velocidade media   : %.2f MB/s\n", mb_s);
-        }
         printf("=======================================================\n");
     }
 
     pausar();
 }
 
-/* =========================================================================
- * 2) DESCOMPRESSÃO DE ARQUIVO
- * ========================================================================= */
+/* 2) descompressao de arquivo */
 static void executar_descompressao(void) {
     char entrada_raw[MAX_CAMINHO], entrada[MAX_CAMINHO];
     char saida_raw[MAX_CAMINHO], saida[MAX_CAMINHO];
@@ -197,7 +188,7 @@ static void executar_descompressao(void) {
     }
     fclose(teste);
 
-    /* Sugere nome removendo .abcz se existir */
+    /* sugestao: nome sem o .abcz */
     {
         char sugestao[MAX_CAMINHO];
         size_t len = strlen(entrada);
@@ -227,13 +218,13 @@ static void executar_descompressao(void) {
     tempo_s = (double)(fim - inicio) / CLOCKS_PER_SEC;
 
     if (ret != DECOMP_OK && ret != DECOMP_ERRO_CHECKSUM) {
-        printf("\n[FALHA] Erro na descompressao: %s (codigo %d)\n", decomp_mensagem_erro(ret), ret);
+        printf("\nErro na descompressao: %s (codigo %d)\n", decomp_mensagem_erro(ret), ret);
     } else {
         char str_rec[64];
         formatar_bytes(res.tam_original, str_rec, sizeof(str_rec));
 
         printf("\n=======================================================\n");
-        printf("              DESCOMPRESSAO FINALIZADA!                \n");
+        printf("            DESCOMPRESSAO CONCLUIDA                    \n");
         printf("=======================================================\n");
         printf("  Arquivo restaurado   : %s\n", saida);
         printf("  Tamanho restaurado   : %s\n", str_rec);
@@ -242,10 +233,10 @@ static void executar_descompressao(void) {
         printf("  Tempo de execucao    : %.4f segundos (%.2f ms)\n", tempo_s, tempo_s * 1000.0);
 
         if (ret == DECOMP_OK) {
-            printf("  Status de Integridade: [OK] ARQUIVO 100%% INTEGRO E IDENTICO!\n");
+            printf("  Integridade          : OK (checksum confere)\n");
         } else {
-            printf("  Status de Integridade: [ALERTA] FALHA DE CHECKSUM!\n");
-            printf("  O arquivo foi corrompido ou modificado.\n");
+            printf("  Integridade          : ERRO (checksum diferente)\n");
+            printf("  O arquivo .abcz pode estar corrompido.\n");
         }
         printf("=======================================================\n");
     }
@@ -253,9 +244,7 @@ static void executar_descompressao(void) {
     pausar();
 }
 
-/* =========================================================================
- * 3) VISUALIZAR TABELA DE CÓDIGOS DE HUFFMAN
- * ========================================================================= */
+/* 3) visualizar tabela de codigos de huffman */
 static void visualizar_codigos_huffman(void) {
     char entrada_raw[MAX_CAMINHO], entrada[MAX_CAMINHO];
     uint64_t freq[HUFF_SIMBOLOS];
@@ -287,14 +276,13 @@ static void visualizar_codigos_huffman(void) {
 
     memset(freq, 0, sizeof(freq));
 
-    /* Tenta verificar se é um .abcz lendo o cabeçalho */
+    /* se for .abcz usa as frequencias do cabecalho, senao conta no arquivo */
     {
         CabecalhoAbcz cab;
         if (cabecalho_ler(f, &cab) == CAB_OK) {
             eh_abcz = 1;
             memcpy(freq, cab.freq, sizeof(freq));
         } else {
-            /* Se não for .abcz, lê o arquivo original e conta frequências */
             static unsigned char buf[TAM_BLOCO];
             size_t n;
             rewind(f);
@@ -353,9 +341,7 @@ static void visualizar_codigos_huffman(void) {
     pausar();
 }
 
-/* =========================================================================
- * 4) TESTE DE INTEGRIDADE RÁPIDO (ROUNDTRIP)
- * ========================================================================= */
+/* 4) teste: comprime, descomprime e compara com o original */
 static void executar_teste_roundtrip(void) {
     char entrada_raw[MAX_CAMINHO], entrada[MAX_CAMINHO];
     char temp_comp[MAX_CAMINHO], temp_rec[MAX_CAMINHO];
@@ -368,7 +354,7 @@ static void executar_teste_roundtrip(void) {
     unsigned char b1[4096], b2[4096];
 
     printf("\n=======================================================\n");
-    printf("     TESTE DE INTEGRIDADE AUTOMATICO (ROUNDTRIP)       \n");
+    printf("       TESTE: COMPRIMIR E DESCOMPRIMIR                 \n");
     printf("=======================================================\n");
     printf("Informe um arquivo para testar compressao + descompressao:\n> ");
     if (!ler_linha(entrada_raw, sizeof(entrada_raw))) return;
@@ -383,7 +369,7 @@ static void executar_teste_roundtrip(void) {
     snprintf(temp_comp, sizeof(temp_comp), "%.*s.__temp_teste.abcz", (int)(sizeof(temp_comp) - 30), entrada);
     snprintf(temp_rec,  sizeof(temp_rec),  "%.*s.__temp_teste.rec",  (int)(sizeof(temp_rec) - 30), entrada);
 
-    printf("\n[1/3] Comprimindo arquivo original...\n");
+    printf("\nComprimindo...\n");
     t0 = clock();
     ret = comprimir_arquivo(entrada, temp_comp, &r_comp);
     t1 = clock();
@@ -393,7 +379,7 @@ static void executar_teste_roundtrip(void) {
         return;
     }
 
-    printf("[2/3] Descomprimindo arquivo gerado...\n");
+    printf("Descomprimindo...\n");
     ret = descomprimir_arquivo(temp_comp, temp_rec, &r_decomp);
     t2 = clock();
     if (ret != DECOMP_OK) {
@@ -404,7 +390,7 @@ static void executar_teste_roundtrip(void) {
         return;
     }
 
-    printf("[3/3] Comparando arquivo original com arquivo recuperado byte a byte...\n");
+    printf("Comparando com o original...\n");
     f_orig = fopen(entrada, "rb");
     f_rec  = fopen(temp_rec, "rb");
 
@@ -424,12 +410,12 @@ static void executar_teste_roundtrip(void) {
     if (f_orig) fclose(f_orig);
     if (f_rec)  fclose(f_rec);
 
-    /* Limpeza dos arquivos temporários */
+    /* apaga os temporarios */
     remove(temp_comp);
     remove(temp_rec);
 
     printf("\n-------------------------------------------------------\n");
-    printf("                RELATORIO DO TESTE                    \n");
+    printf("                RESULTADO DO TESTE                     \n");
     printf("-------------------------------------------------------\n");
     printf("  Tamanho original     : %" PRIu64 " bytes\n", r_comp.tam_original);
     printf("  Tamanho comprimido   : %" PRIu64 " bytes (%.2f%% do original)\n",
@@ -439,25 +425,23 @@ static void executar_teste_roundtrip(void) {
     printf("  Tempo descompressao  : %.4f s\n", (double)(t2 - t1) / CLOCKS_PER_SEC);
     printf("  CRC-32 original      : 0x%08" PRIX32 "\n", r_comp.checksum);
     printf("  CRC-32 recuperado    : 0x%08" PRIX32 "\n", r_decomp.checksum_calculado);
-    printf("  Comparacao binaria   : %s\n", identicos ? "[PASSOU] 100% Identicos byte a byte" : "[FALHOU] Diferenca encontrada!");
+    printf("  Original x recuperado: %s\n", identicos ? "iguais" : "DIFERENTES");
     printf("-------------------------------------------------------\n");
 
     pausar();
 }
 
-/* =========================================================================
- * 5) SOBRE O PROJETO / INTEGRANTES
- * ========================================================================= */
+/* 5) sobre o projeto / integrantes */
 static void exibir_sobre(void) {
     printf("\n=======================================================\n");
-    printf("      projetoPE / PROJETO-PE — COMPACTADOR HUFFMAN        \n");
+    printf("            projetoPE - Compactador Huffman               \n");
     printf("=======================================================\n");
     printf(" Disciplina: Programacao Estruturada (MCTA028-15)\n");
     printf(" Instituicao: Universidade Federal do ABC (UFABC)\n");
     printf(" Quadrimestre: 2026.3\n");
     printf(" Professores: Roberto Sadao Yokoyama\n");
     printf("              Luneque Del Rio de Souza e Silva Junior\n\n");
-    printf(" Equipe (Discentes):\n");
+    printf(" Equipe:\n");
     printf("  * Jose Ricardo Feltran Junior (RA: 11202421133) - Integrante 1\n");
     printf("  * Rafael Maximiano Luiz (RA: 11202432420) - Integrante 2\n");
     printf("  * Renan Henrique Ferreira Monteiro (RA: 11202020303) - Integrante 3\n");
@@ -466,32 +450,36 @@ static void exibir_sobre(void) {
     pausar();
 }
 
-/* =========================================================================
- * MENU PRINCIPAL
- * ========================================================================= */
+/* menu principal */
 int main(void) {
     char opcao_str[32];
     int opcao;
 
     for (;;) {
         printf("\n=======================================================\n");
-        printf("           projetoPE — Compactador de Arquivos           \n");
+        printf("           projetoPE - Compactador de Arquivos            \n");
         printf("               UFABC - P.E. - 2026.3                  \n");
         printf("=======================================================\n");
         printf("  1) Comprimir arquivo (.abcz)\n");
         printf("  2) Descomprimir arquivo (.abcz)\n");
         printf("  3) Visualizar tabela de codigos de Huffman\n");
-        printf("  4) Executar teste de integridade rapido (Roundtrip)\n");
+        printf("  4) Testar arquivo (comprime, descomprime e compara)\n");
         printf("  5) Sobre o projeto e equipe\n");
         printf("  0) Sair\n");
         printf("=======================================================\n");
-        printf("Escolha uma opcao: ");
+        printf("Opcao: ");
 
         if (!ler_linha(opcao_str, sizeof(opcao_str))) {
             break;
         }
 
-        opcao = atoi(opcao_str);
+        {
+            char *fim_num;
+            long v = strtol(opcao_str, &fim_num, 10);
+            if (fim_num == opcao_str || *fim_num != '\0')
+                v = -1; /* letra ou vazio nao pode cair no 0 (sair) */
+            opcao = (int)v;
+        }
 
         switch (opcao) {
         case 1:
@@ -510,10 +498,10 @@ int main(void) {
             exibir_sobre();
             break;
         case 0:
-            printf("\nEncerrando o programa. Ate mais!\n");
+            printf("\nSaindo...\n");
             return 0;
         default:
-            printf("\nOpcao invalida! Digite um numero de 0 a 5.\n");
+            printf("\nOpcao invalida, digite de 0 a 5.\n");
             pausar();
             break;
         }
