@@ -1,97 +1,65 @@
-===============================================================================
-                     projetoPE / PROJETO-PE — COMPACTADOR HUFFMAN
-                  Universidade Federal do ABC (UFABC) - 2026.3
-           Disciplina: MCTA028-15 - Programação Estruturada
-   Docentes: Prof. Roberto Sadao Yokoyama e Prof. Luneque Del Rio de Souza e Silva Jr.
-===============================================================================
+projetoPE - Compactador de arquivos com Huffman
+UFABC 2026.3 - MCTA028-15 Programacao Estruturada
+Profs. Roberto Sadao Yokoyama e Luneque Del Rio de Souza e Silva Jr.
 
-1. SOBRE O PROJETO
-------------------
-O projetoPE é uma aplicação completa em linguagem C (Padrão ANSI C) para compressão
-e descompressão de arquivos de qualquer formato (texto e binário) baseada no
-Algoritmo Clássico de Huffman.
-
-Diferenciais implementados:
-  - Construção da árvore de Huffman com Min-Heap próprio (sem bibliotecas prontas).
-  - Escrita e leitura compacta bit a bit (BitStream).
-  - Serialização de cabeçalho inteligente usando codificação de tamanho variável (varint).
-  - Verificação rigorosa de integridade com Checksum CRC-32 (IEEE 802.3).
-  - Menu interativo amigável no terminal com tratamento de caminhos relativos/absolutos.
-  - Exibição de métricas completas de tempo, taxa e razão de compressão (R = Sc / So).
-  - Exibição da tabela de códigos de Huffman e frequências de bytes.
-  - Teste de integridade automatizado (Roundtrip) byte a byte.
+Integrantes
+-----------
+Jose Ricardo Feltran Junior        RA 11202421133
+Rafael Maximiano Luiz              RA 11202432420
+Renan Henrique Ferreira Monteiro   RA 11202020303
+Rodrigo Martel Poggi de Araujo     RA 11202522393
 
 
-2. INTEGRANTES DA EQUIPE (DISCENTES) E RESPONSABILIDADES
----------------------------------------------------------
-- José Ricardo Feltran Júnior (RA: 11202421133) — Integrante 1:
-    Implementação do min-heap, construção da árvore de Huffman e geração dos códigos.
-- Rafael Maximiano Luiz (RA: 11202432420) — Integrante 2:
-    Implementação da escrita e leitura de bits, do cabeçalho e da rotina de compressão.
-- Renan Henrique Ferreira Monteiro (RA: 11202020303) — Integrante 3:
-    Implementação da descompressão e da verificação de integridade por checksum CRC-32.
-- Rodrigo Martel Poggi de Araújo (RA: 11202522393) — Integrante 4:
-    Implementação do menu, tratamento de caminhos, medição de tempo e tamanho,
-    testes comparativos com gzip e relatório técnico.
+Compilacao
+----------
+Compilador: GCC. Nao usa nenhuma biblioteca externa, so a biblioteca padrao
+do C (stdio.h, stdlib.h, string.h, time.h, stdint.h, inttypes.h, ctype.h).
+
+Com o Makefile:
+
+    make
+
+Gera o programa principal "projetoPE" e dois programas auxiliares usados nos
+testes (comprimir_cli e descomprimir_cli).
+
+Sem o make:
+
+    gcc -Wall -Wextra -O2 -Iinclude src/huffman.c src/heap.c src/bitio.c src/cabecalho.c src/checksum.c src/compressao.c src/descompressao.c src/main.c -o projetoPE
 
 
-3. REQUISITOS DE COMPILAÇÃO
----------------------------
-- Compilador: GCC (GNU Compiler Collection), compatível com C99 / ANSI C.
-- Ferramenta de automação: GNU Make (opcional, pode ser compilado diretamente com gcc).
-- Nenhuma dependência externa ou biblioteca proprietária é necessária (apenas a biblioteca padrão C: stdio.h, stdlib.h, string.h, time.h, stdint.h, inttypes.h).
+Execucao
+--------
+Linux:    ./projetoPE
+Windows:  projetoPE.exe
 
-
-4. COMO COMPILAR
-----------------
-Utilizando o Makefile fornecido:
-
-  $ make
-
-Isto compilará o executável principal `projetoPE` (ou `projetoPE.exe` no Windows),
-além dos utilitários de linha de comando para testes `comprimir_cli` e `descomprimir_cli`.
-
-Compilação manual direta com GCC (caso não possua o make):
-
-  $ gcc -Wall -Wextra -O2 -Iinclude src/huffman.c src/heap.c src/bitio.c src/cabecalho.c src/checksum.c src/compressao.c src/descompressao.c src/main.c -o projetoPE
-
-
-5. COMO EXECUTAR
-----------------
-Para iniciar o menu interativo:
-
-  Linux / macOS:
-    $ ./projetoPE
-
-  Windows (PowerShell / CMD):
-    > .\projetoPE.exe
-
-Opções disponíveis no menu:
-  1) Comprimir arquivo (.abcz)
-  2) Descomprimir arquivo (.abcz)
-  3) Visualizar tabela de códigos de Huffman
-  4) Executar teste de integridade rápido (Roundtrip)
-  5) Sobre o projeto e equipe
+Menu:
+  1) Comprimir arquivo (gera .abcz)
+  2) Descomprimir arquivo .abcz
+  3) Ver a tabela de codigos de Huffman de um arquivo
+  4) Testar arquivo (comprime, descomprime e compara com o original)
+  5) Sobre o projeto e a equipe
   0) Sair
 
+Os caminhos podem ser relativos ou absolutos. O arquivo original nunca e
+alterado, sempre e gerado um arquivo novo.
 
-6. TESTES COMPARATIVOS (HUFFMAN vs GZIP)
-----------------------------------------
-Para executar a bateria de testes automatizada nos 3 cenários de redundância
-(Alta, Média e Baixa redundância) comparando o desempenho com o gzip:
-
-  $ python tests/benchmark_gzip.py
-
-Os arquivos de teste serão gerados em `tests/cenarios/` e as métricas detalhadas
-de tempo e razão de compressão serão exibidas no terminal.
+Funcionalidade adicional: checksum CRC-32 do arquivo original gravado no
+cabecalho e conferido na descompressao.
 
 
-7. ESTRUTURA DOS DIRETÓRIOS
----------------------------
-  include/           Cabeçalhos (.h) com definições de TADs e interfaces públicas
-  src/               Código-fonte (.c) com a lógica e menu interativo
-  tests/             Utilitários CLI para testes pontuais e scripts de benchmark
-  docs/              Documentação técnica detalhada das rotinas internas
-  Makefile           Regras de compilação automatizada
-  leia-me.txt        Instruções de compilação e execução
-===============================================================================
+Testes com gzip
+---------------
+Depois de compilar com make, na pasta do projeto:
+
+    python3 tests/benchmark_gzip.py
+
+O script gera os arquivos dos 3 cenarios (alta, media e baixa redundancia)
+em tests/cenarios/ e mostra os tamanhos e tempos do nosso programa e do gzip.
+
+
+Pastas
+------
+include/   arquivos .h
+src/       arquivos .c (main.c tem o menu)
+tests/     programas auxiliares e script de comparacao com o gzip
+docs/      relatorio tecnico em PDF
