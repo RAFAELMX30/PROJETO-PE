@@ -3,7 +3,6 @@
 #include <string.h>
 #include <time.h>
 #include <inttypes.h>
-#include <ctype.h>
 
 #include "compressao.h"
 #include "descompressao.h"
