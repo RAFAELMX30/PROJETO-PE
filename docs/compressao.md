@@ -131,6 +131,38 @@ bw_flush(&bw);
 
 ---
 
+## Por que fizemos assim
+
+### Duas passadas em vez de uma
+
+A alternativa mais óbvia seria carregar o arquivo inteiro na memória, contar as frequências, construir a árvore e comprimir tudo sem reler o disco. O problema: um arquivo de vídeo de 4 GB não cabe na RAM. Com duas passadas, o programa processa qualquer tamanho de arquivo usando apenas 64 KB de buffer — independente do tamanho da entrada.
+
+Outra alternativa seria comprimir na primeira passada já gravando os dados em um buffer temporário, e só depois escrever o cabeçalho à frente. O problema é o mesmo: o buffer cresceria até o tamanho do arquivo comprimido, exigindo `malloc` de tamanho desconhecido e potencialmente centenas de MB.
+
+Duas passadas sobre o disco custam pouco — releitura sequencial é rápida — e eliminam completamente o problema de memória.
+
+---
+
+### Blocos de 64 KB
+
+64 KB é o tamanho típico de uma página de cache L2/L3 em processadores modernos. Blocos maiores aumentam o throughput de I/O mas ocupam mais RAM e podem causar cache misses. Blocos menores fazem mais chamadas ao sistema (`fread`/`fwrite`), aumentando o overhead. 64 KB é o ponto de equilíbrio padrão em compressores — o mesmo valor usado internamente pelo `zlib`.
+
+---
+
+### `static` para `bloco` e `codigos`
+
+Variáveis locais ficam na pilha. Uma pilha típica no Linux tem 8 MB de limite. Alocar 64 KB (`bloco`) + ~65 KB (`codigos`) na pilha não quebraria neste programa específico, mas é prática arriscada em projetos maiores onde a pilha já pode estar parcialmente ocupada por chamadas anteriores. `static` coloca a variável na memória de dados (BSS/data segment), que não tem esse limite. O custo: a função não é reentrante e não funciona corretamente em múltiplas threads. Como o programa é inteiramente single-thread, isso não é problema.
+
+---
+
+### Apagar o arquivo parcial em caso de erro
+
+Um `.abcz` cortado pela metade é irrecuperável — tem cabeçalho mas os dados de Huffman estão incompletos. Mantê-lo induziria o usuário a tentar descomprimir e obter um erro confuso em vez de um erro claro na compressão. A decisão foi: arquivo parcial é arquivo inútil, apagar imediatamente.
+
+O `fclose(sai)` também é verificado por um motivo menos óbvio: o sistema operacional armazena os dados de saída em buffer interno antes de gravar no disco. Um erro de escrita pode aparecer só no `fclose`, quando o buffer é descarregado. Ignorar o retorno do `fclose` poderia silenciosamente gerar um arquivo corrompido sem nenhum aviso.
+
+---
+
 ## Códigos de retorno
 
 | Código | Significado |

@@ -106,6 +106,52 @@ Se os valores forem iguais, o arquivo foi recuperado intacto.
 
 ---
 
+## Por que fizemos assim
+
+### Por que CRC-32 e não MD5 ou SHA-256?
+
+MD5 e SHA-256 são algoritmos criptográficos — projetados para resistir a adulteração **intencional**, onde um atacante tenta forjar um hash sem conhecer os dados originais. Para o nosso propósito (detectar corrupção **acidental** — bit flip por falha de disco ou truncamento de arquivo), CRC-32 é suficiente e muito mais rápido.
+
+CRC-32 processa ~1 GB/s em hardware moderno. SHA-256 sem aceleração de hardware processa ~200 MB/s. Para arquivos de centenas de MB, a diferença é relevante. Além disso, implementar CRC-32 do zero cabe em 25 linhas de C; SHA-256 exigiria centenas de linhas ou uma dependência externa — ambas opções piores para um projeto acadêmico sem dependências.
+
+---
+
+### Por que tabela de lookup e não calcular direto?
+
+Sem tabela, calcular o CRC de cada byte exigiria 8 iterações de divisão polinomial — 8 operações por byte. Com a tabela de 256 entradas pré-calculada, o custo é 1 XOR + 1 lookup por byte — aproximadamente 8× mais rápido.
+
+A tabela ocupa 256 × 4 bytes = 1 KB na memória, valor desprezível. O custo de pré-calculá-la na primeira chamada é amortizado em qualquer arquivo com mais de ~100 bytes.
+
+---
+
+### Por que o polinômio `0xEDB88320` (IEEE 802.3)?
+
+É o padrão CRC-32 usado por `zlib`, `gzip`, PNG, Ethernet, ZIP e USB. Suas propriedades matemáticas são bem estudadas: detecta todos os erros de rajada de até 32 bits, todos os erros com número ímpar de bits, e todas as combinações de 1 e 2 erros em mensagens de qualquer tamanho prático. Usar um polinômio diferente traria riscos de propriedades inferiores sem nenhuma vantagem para o projeto.
+
+---
+
+### Por que a representação invertida (reflected)?
+
+O hardware CRC original processava bits do LSB para o MSB. A representação invertida — `0xEDB88320` em vez de `0x04C11DB7` — é a convenção em software que replica esse comportamento e é o padrão em todas as implementações de referência. Garante que o CRC calculado pelo nosso programa seja idêntico ao de qualquer outra ferramenta que use CRC-32 IEEE 802.3.
+
+---
+
+### Por que as inversões `~crc` no início e no fim?
+
+Sem a inversão inicial (`crc = ~crc`), um arquivo que começa com vários bytes zero teria o mesmo CRC que se esses zeros não existissem — o estado inicial zero XOR com zero continua zero, e o CRC seria cego ao preenchimento inicial. Com a inversão, o estado inicial é `0xFFFFFFFF`, tornando o algoritmo sensível a zeros no começo do arquivo. A inversão final (`return ~crc`) é parte do padrão IEEE e garante compatibilidade com outras implementações.
+
+---
+
+### Por que não usar soma simples ou XOR de bytes?
+
+**Soma de bytes:** não detecta bytes trocados de posição (A + B = B + A). Não detecta a substituição de um byte por dois bytes que somam o mesmo valor.
+
+**XOR byte a byte:** não detecta a adição ou remoção de pares de bytes idênticos (A XOR A = 0). Uma transposição de dois bytes idênticos é invisível.
+
+**CRC-32:** trata os dados como um número binário e calcula o resto da divisão por um polinômio — operação sensível à posição de cada bit. Uma mudança de 1 bit em qualquer posição sempre produz um CRC diferente.
+
+---
+
 ## Propriedades
 
 | Propriedade | Valor |

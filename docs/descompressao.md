@@ -144,6 +144,44 @@ Quando `cab.tam_original == 0`, o loop de decodificação não executa e `crc` p
 
 ---
 
+## Por que fizemos assim
+
+### Reconstruir a árvore das frequências, não salvar a árvore pronta
+
+A alternativa seria salvar a estrutura da árvore diretamente no arquivo — os nós e sua topologia — para não precisar reconstruí-la. O problema: ponteiros são endereços de memória. Salvar um ponteiro em disco é inútil porque na próxima execução o endereço simplesmente não existe mais. Serializar a topologia da árvore exigiria um formato recursivo com marcadores para nós internos e folhas — mais código, mais complexidade, e mais espaço no cabeçalho.
+
+As frequências funcionam porque a árvore de Huffman é **determinística**: dada a mesma tabela de frequências e o mesmo critério de desempate (campo `ordem`), o algoritmo de construção sempre produz a mesma árvore. As frequências já precisam estar no cabeçalho de qualquer forma e são compactas (no máximo 256 inteiros). Nenhuma informação extra é necessária.
+
+---
+
+### `tam_original` como critério de parada, não um marcador especial
+
+A alternativa seria inserir uma sequência especial de bits no final do bitstream para sinalizar o fim dos dados — como um byte de EOF.
+
+O problema: para o marcador funcionar, ele precisaria de um valor que nunca aparece naturalmente nos dados comprimidos. Como processamos qualquer arquivo binário, todos os padrões de bits são possíveis. A solução seria escaping — preceder o marcador real com um caractere de escape quando ele aparecer nos dados — o que complica o código e aumenta o tamanho do arquivo para certos tipos de entrada.
+
+`tam_original` resolve sem custo extra: já precisamos armazenar o tamanho original no cabeçalho para calcular a razão de compressão e o CRC. Usá-lo como critério de parada é zero custo de implementação. Os bits de padding do último byte são simplesmente ignorados — a contagem chega ao fim antes de consumi-los.
+
+---
+
+### Manter o arquivo em erro de checksum, apagar nos outros erros
+
+Em erro de checksum, **todos** os bytes foram decodificados e gravados — a árvore foi percorrida até o fim e o arquivo de saída está completo em tamanho. O usuário pode querer inspecionar os dados, comparar byte a byte com o original, ou decidir se a diferença é relevante para o caso específico (talvez o arquivo tenha sido editado intencionalmente). Apagar seria perda de informação sem benefício.
+
+Nos outros erros — I/O corrompido, formato inválido, memória insuficiente — o arquivo de saída está **incompleto**. Um arquivo truncado que parece completo é mais perigoso do que nenhum arquivo. A decisão foi apagar e avisar com o código de erro adequado, sem deixar rastro que possa ser confundido com um arquivo válido.
+
+---
+
+### Percorrer a árvore bit a bit, não usar tabela de decodificação direta
+
+A alternativa eficiente seria construir uma tabela inversa onde, dado um prefixo de bits, se obtém o byte e o comprimento do código diretamente — sem percorrer a árvore nó a nó. É o que compiladores e compressores de produção fazem (Huffman canônico com tabela de lookup de comprimento fixo).
+
+O problema: a tabela exige conhecer o comprimento máximo dos códigos para definir seu tamanho. No pior caso, Huffman gera códigos de até 255 bits — uma tabela de 2^255 entradas é impossível. Implementações reais contornam isso com tabelas de múltiplos estágios e reordenação dos códigos (Huffman canônico), o que exige dezenas de linhas adicionais e lógica de reorganização da árvore.
+
+Percorrer a árvore é O(comprimento do código) por byte — na prática O(log N) médio para N símbolos distintos. Para os arquivos de centenas de KB usados nos testes, a diferença de velocidade em relação a uma tabela direta é imperceptível. A clareza e correção do código compensam.
+
+---
+
 ## Códigos de retorno
 
 | Código | Significado |
