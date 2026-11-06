@@ -13,7 +13,7 @@ Rodrigo Martel Poggi de Araujo     RA 11202522393
 Compilacao
 ----------
 Compilador: GCC. Nao usa nenhuma biblioteca externa, so a biblioteca padrao
-do C (stdio.h, stdlib.h, string.h, time.h, stdint.h, inttypes.h, ctype.h).
+do C (stdio.h, stdlib.h, string.h, time.h, stdint.h, inttypes.h).
 
 Com o Makefile:
 
@@ -49,9 +49,11 @@ cabecalho e conferido na descompressao.
 
 Testes com gzip
 ---------------
-Depois de compilar com make, na pasta do projeto:
+Depois de compilar com make (ou com o gcc, gerando tambem comprimir_cli e
+descomprimir_cli), na pasta do projeto:
 
-    python3 tests/benchmark_gzip.py
+    python3 tests/benchmark_gzip.py        (Linux)
+    python tests/benchmark_gzip.py         (Windows)
 
 O script gera os arquivos dos 3 cenarios (alta, media e baixa redundancia)
 em tests/cenarios/ e mostra os tamanhos e tempos do nosso programa e do gzip.
