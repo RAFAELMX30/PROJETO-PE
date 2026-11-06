@@ -56,7 +56,7 @@ def executar_benchmark():
     ]
 
     print("==================================================================================")
-    print("       BENCHMARK DE COMPRESSAO: HUFFMAN (GarchY) vs GZIP (Comercial)              ")
+    print("       BENCHMARK DE COMPRESSAO: HUFFMAN (projetoPE) vs GZIP (Comercial)              ")
     print("==================================================================================")
 
     resultados = []
@@ -71,7 +71,7 @@ def executar_benchmark():
         caminho_gz = caminho + ".gz"
         caminho_rec_gz = caminho + ".rec_gz"
 
-        # --- HUFFMAN (GarchY) ---
+        # --- HUFFMAN (projetoPE) ---
         t0 = time.perf_counter()
         subprocess.run(["./comprimir_cli.exe", caminho, caminho_abcz], check=True, stdout=subprocess.DEVNULL)
         t_comp_huff = time.perf_counter() - t0

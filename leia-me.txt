@@ -1,5 +1,5 @@
 ===============================================================================
-                     GarchY / PROJETO-PE — COMPACTADOR HUFFMAN
+                     projetoPE / PROJETO-PE — COMPACTADOR HUFFMAN
                   Universidade Federal do ABC (UFABC) - 2026.3
            Disciplina: MCTA028-15 - Programação Estruturada
    Docentes: Prof. Roberto Sadao Yokoyama e Prof. Luneque Del Rio de Souza e Silva Jr.
@@ -7,7 +7,7 @@
 
 1. SOBRE O PROJETO
 ------------------
-O GarchY é uma aplicação completa em linguagem C (Padrão ANSI C) para compressão
+O projetoPE é uma aplicação completa em linguagem C (Padrão ANSI C) para compressão
 e descompressão de arquivos de qualquer formato (texto e binário) baseada no
 Algoritmo Clássico de Huffman.
 
@@ -48,12 +48,12 @@ Utilizando o Makefile fornecido:
 
   $ make
 
-Isto compilará o executável principal `garchy` (ou `garchy.exe` no Windows),
+Isto compilará o executável principal `projetoPE` (ou `projetoPE.exe` no Windows),
 além dos utilitários de linha de comando para testes `comprimir_cli` e `descomprimir_cli`.
 
 Compilação manual direta com GCC (caso não possua o make):
 
-  $ gcc -Wall -Wextra -O2 -Iinclude src/huffman.c src/heap.c src/bitio.c src/cabecalho.c src/checksum.c src/compressao.c src/descompressao.c src/main.c -o garchy
+  $ gcc -Wall -Wextra -O2 -Iinclude src/huffman.c src/heap.c src/bitio.c src/cabecalho.c src/checksum.c src/compressao.c src/descompressao.c src/main.c -o projetoPE
 
 
 5. COMO EXECUTAR
@@ -61,10 +61,10 @@ Compilação manual direta com GCC (caso não possua o make):
 Para iniciar o menu interativo:
 
   Linux / macOS:
-    $ ./garchy
+    $ ./projetoPE
 
   Windows (PowerShell / CMD):
-    > .\garchy.exe
+    > .\projetoPE.exe
 
 Opções disponíveis no menu:
   1) Comprimir arquivo (.abcz)

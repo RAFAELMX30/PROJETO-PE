@@ -6,7 +6,7 @@
 ---
 
 # RELATÓRIO TÉCNICO DE IMPLEMENTAÇÃO
-## GarchY: Compactador e Descompactador Huffman em ANSI C
+## projetoPE: Compactador e Descompactador Huffman em ANSI C
 
 ### Integrantes da Equipe (Discentes):
 * **José Ricardo Feltran Júnior (RA: 11202421133) — Integrante 1:** Implementação da fila de prioridade Min-Heap, construção da árvore de Huffman e geração dos códigos binários prefixados.
@@ -18,7 +18,7 @@
 
 ## 1. Requisitos Implementados e Funcionais
 
-O projeto **GarchY** foi implementado estritamente no padrão formal da linguagem C (ANSI C / C99), com compilação livre de erros e advertências sob os parâmetros `-Wall -Wextra` do compilador GCC.
+O projeto **projetoPE** foi implementado estritamente no padrão formal da linguagem C (ANSI C / C99), com compilação livre de erros e advertências sob os parâmetros `-Wall -Wextra` do compilador GCC.
 
 1. **Interface de Terminal Amigável:** Menu interativo estruturado com opções de:
    * `1) Comprimir arquivo (.abcz)`
@@ -111,7 +111,7 @@ O programa foi testado sob três cenários de redundância com arquivos de **500
 
 ### Tabela 1: Comparativo de Eficiência Espacial e Integridade
 
-| Cenário de Teste | Tamanho Original | Huffman (GarchY) | Razão ($R = \frac{S_c}{S_o}$) | Economia (%) | Gzip Comercial | Razão Gzip | Integridade CRC-32 |
+| Cenário de Teste | Tamanho Original | Huffman (projetoPE) | Razão ($R = \frac{S_c}{S_o}$) | Economia (%) | Gzip Comercial | Razão Gzip | Integridade CRC-32 |
 |---|---|---|---|---|---|---|---|
 | **Alta Redundância** | 512.000 B | 231.263 B | **0,4517** | **54,83%** | 1.578 B | 0,0031 | **[OK] 100% Íntegro** |
 | **Média Redundância** | 512.000 B | 283.361 B | **0,5534** | **44,66%** | 5.604 B | 0,0109 | **[OK] 100% Íntegro** |
@@ -126,7 +126,7 @@ O programa foi testado sob três cenários de redundância com arquivos de **500
 | **Baixa Redundância** | 36,83 ms | 144,73 ms | 56,70 ms | 161,16 ms |
 
 ### Análise Crítica dos Resultados:
-1. **Desempenho do Huffman:** O GarchY obteve reduções substanciais de 54,83% e 44,66% em dados textuais/estruturados com tempos inferiores a 60 ms, atingindo o limite de entropia esperado para modelos estáticos por símbolo.
+1. **Desempenho do Huffman:** O projetoPE obteve reduções substanciais de 54,83% e 44,66% em dados textuais/estruturados com tempos inferiores a 60 ms, atingindo o limite de entropia esperado para modelos estáticos por símbolo.
 2. **Diferença para o Gzip:** O gzip emprega o algoritmo Deflate (LZ77 + Huffman). O LZ77 busca repetições de cadeias de caracteres em uma janela deslizante e substitui frases inteiras por referências `(distância, comprimento)`. Por isso, em textos com repetições longas, o gzip atinge taxas de compressão muito superiores. Já o algoritmo de Huffman isolado atua sobre a frequência individual de bytes, sendo imbatível em simplicidade e baixo uso de memória.
 3. **Baixa Redundância:** Em ruído aleatório, a entropia máxima impede compressão sem perdas. Ambos sofreram leve expansão pelos cabeçalhos (+0,15% no Huffman e +0,04% no gzip).
 4. **Corretude:** Em 100% dos testes, a integridade foi confirmada byte a byte e pelo CRC-32.

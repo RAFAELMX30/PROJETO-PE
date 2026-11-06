@@ -450,7 +450,7 @@ static void executar_teste_roundtrip(void) {
  * ========================================================================= */
 static void exibir_sobre(void) {
     printf("\n=======================================================\n");
-    printf("      GarchY / PROJETO-PE — COMPACTADOR HUFFMAN        \n");
+    printf("      projetoPE / PROJETO-PE — COMPACTADOR HUFFMAN        \n");
     printf("=======================================================\n");
     printf(" Disciplina: Programacao Estruturada (MCTA028-15)\n");
     printf(" Instituicao: Universidade Federal do ABC (UFABC)\n");
@@ -475,7 +475,7 @@ int main(void) {
 
     for (;;) {
         printf("\n=======================================================\n");
-        printf("           GarchY — Compactador de Arquivos           \n");
+        printf("           projetoPE — Compactador de Arquivos           \n");
         printf("               UFABC - P.E. - 2026.3                  \n");
         printf("=======================================================\n");
         printf("  1) Comprimir arquivo (.abcz)\n");

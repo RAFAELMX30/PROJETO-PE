@@ -7,7 +7,7 @@ class RelatorioTecnicoPDF(FPDF):
         if self.page_no() > 1:
             self.set_font("Helvetica", "I", 8)
             self.set_text_color(120, 120, 120)
-            self.cell(0, 6, "UFABC | Programacao Estruturada (MCTA028-15) - Relatorio Tecnico: GarchY", border=0, align="R")
+            self.cell(0, 6, "UFABC | Programacao Estruturada (MCTA028-15) - Relatorio Tecnico: projetoPE", border=0, align="R")
             self.ln(8)
 
     def footer(self):
@@ -49,7 +49,7 @@ def criar_relatorio():
     pdf.cell(0, 9, "RELATORIO TECNICO DE IMPLEMENTACAO", ln=True, align="C")
     pdf.set_font("Helvetica", "B", 14)
     pdf.set_text_color(40, 80, 140)
-    pdf.cell(0, 8, "GarchY: Compactador e Descompactador Huffman em ANSI C", ln=True, align="C")
+    pdf.cell(0, 8, "projetoPE: Compactador e Descompactador Huffman em ANSI C", ln=True, align="C")
     pdf.ln(8)
 
     # Identificacao da Equipe
@@ -119,7 +119,7 @@ def criar_relatorio():
     # =========================================================================
     titulo_secao("1", "REQUISITOS IMPLEMENTADOS E FUNCIONAIS")
     corpo(
-        "O projeto GarchY foi desenvolvido em conformidade com as diretrizes do Trabalho de Implementacao de Programacao "
+        "O projeto projetoPE foi desenvolvido em conformidade com as diretrizes do Trabalho de Implementacao de Programacao "
         "Estruturada (2026.3). O objetivo central foi implementar uma ferramenta completa de compressao e descompressao de "
         "arquivos sem perdas (lossless) em padrao formal ANSI C, operando tanto sobre arquivos textuais quanto binarios."
     )
@@ -240,7 +240,7 @@ def criar_relatorio():
     titulo_secao("4", "CASOS DE TESTE E MENSURACAO DE DESEMPENHO")
     corpo(
         "Conforme requisitado no edital, o programa foi testado sob tres cenarios de redundancia estatistica com arquivos padronizados "
-        "de 500 KB (512.000 Bytes), comparando os resultados do GarchY contra o compressor comercial gzip (modo Deflate):"
+        "de 500 KB (512.000 Bytes), comparando os resultados do projetoPE contra o compressor comercial gzip (modo Deflate):"
     )
     corpo(
         "- Cenario 1 (Alta Redundancia): Padrao repetitivo homogeneo com reduzido conjunto de caracteres (ex: sequencias biologicas de DNA).\n"
@@ -303,7 +303,7 @@ def criar_relatorio():
 
     titulo_subsecao("Analise Critica e Comparativa com a Ferramenta Comercial (Gzip):")
     corpo(
-        "1. Desempenho do Huffman: O GarchY obteve excelente reducao de volume nos dados textuais e repetitivos, reduzindo 54,83% no "
+        "1. Desempenho do Huffman: O projetoPE obteve excelente reducao de volume nos dados textuais e repetitivos, reduzindo 54,83% no "
         "cenario de alta redundancia e 44,66% em linguagem natural com tempos sempre inferiores a 60 milissegundos. Este resultado "
         "comprova que o algoritmo atingiu a taxa otima esperada para modelos estaticos de Huffman por byte.\n"
         "2. Diferenca Estrutural para o Gzip: O gzip utiliza o algoritmo Deflate, que combina codificacao de Huffman com LZ77 (janela "
@@ -314,7 +314,7 @@ def criar_relatorio():
         "3. Comportamento em Baixa Redundancia (Alta Entropia): Em dados pseudo-aleatorios com distribuicao uniforme, a entropia por byte "
         "aproxima-se de 8 bits/simbolo. Conforme estabelecido pela Teoria da Informacao, nenhum algoritmo sem perdas consegue compactar "
         "dados aleatorios. Ambos os programas registraram expansao residual insignificante devida aos metadados de cabecalho (+0,15% no "
-        "GarchY e +0,04% no Gzip).\n"
+        "projetoPE e +0,04% no Gzip).\n"
         "4. Corretude e Integridade: Em todos os testes, os arquivos recuperados foram confirmados como 100% identicos aos originais "
         "tanto pela comparacao de hash SHA-256 quanto pelo CRC-32 integrado."
     )
@@ -341,7 +341,7 @@ def criar_relatorio():
     pdf.set_text_color(100, 100, 100)
     pdf.cell(0, 6, "Relatorio concluido e aprovado pela equipe para submissao no Moodle - UFABC 2026.3.", align="C")
 
-    caminho_saida = "docs/Relatorio_Tecnico_UFABC_GarchY.pdf"
+    caminho_saida = "docs/Relatorio_Tecnico_UFABC_projetoPE.pdf"
     pdf.output(caminho_saida)
     print(f"Relatorio PDF gerado com sucesso: {caminho_saida}")
 

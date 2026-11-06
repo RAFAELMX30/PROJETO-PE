@@ -1,4 +1,4 @@
-# GarchY — Roteiro de Apresentação
+# projetoPE — Roteiro de Apresentação
 
 **Disciplina:** MCTA028-15 — Programação Estruturada · UFABC · 2026.3  
 **Docentes:** Prof. Roberto Sadao Yokoyama · Prof. Luneque Del Rio de Souza e Silva Junior  
@@ -23,7 +23,7 @@ Apresentar o problema, o time e fazer a compressão acontecer na frente dos prof
 ### Fala
 
 ```text
-Bom dia. Nosso projeto se chama GarchY — um compactador e
+Bom dia. Nosso projeto se chama projetoPE — um compactador e
 descompactador de arquivos escrito inteiramente em ANSI C,
 sem nenhuma dependência externa além da biblioteca padrão.
 
@@ -40,7 +40,7 @@ Antes de entrar nos detalhes, vou mostrar isso acontecendo.
 *Abrir o terminal. Navegar até o diretório do projeto.*
 
 ```bash
-./garchy
+./projetoPE
 ```
 
 *Escolher opção 1 (Comprimir). Usar o `README.md` como entrada. Aceitar o nome de saída sugerido.*
@@ -82,7 +82,7 @@ Explicar as duas estruturas no núcleo do algoritmo. O Min-Heap não é detalhe 
 ### Fala
 
 ```text
-Minha parte foi construir o coração do GarchY: a fila de
+Minha parte foi construir o coração do projetoPE: a fila de
 prioridade e a árvore que gera os códigos.
 
 O Min-Heap é um vetor de até 256 ponteiros — exatamente o número
@@ -273,14 +273,14 @@ Testamos em três cenários com arquivos de 500 KB cada,
 comparando com o gzip.
 ```
 
-| Cenário              | Original  | GarchY    | Razão  | Economia | Gzip      | Integridade       |
+| Cenário              | Original  | projetoPE    | Razão  | Economia | Gzip      | Integridade       |
 |----------------------|-----------|-----------|--------|----------|-----------|-------------------|
 | Alta Redundância     | 512.000 B | 231.263 B | 0,4517 | 54,83%   | 1.578 B   | CRC-32 ✓          |
 | Média Redundância    | 512.000 B | 283.361 B | 0,5534 | 44,66%   | 5.604 B   | CRC-32 ✓          |
 | Baixa Redundância    | 512.000 B | 512.787 B | 1,0015 | -0,15%   | 512.196 B | CRC-32 ✓          |
 
 ```text
-Alta e média redundância: o GarchY comprime de forma substantiva.
+Alta e média redundância: o projetoPE comprime de forma substantiva.
 Baixa redundância — bytes pseudo-aleatórios com entropia máxima —
 não existe compressão sem perda possível. Ambos os compressores
 sofrem leve expansão pelo overhead do cabeçalho. Comportamento esperado.
@@ -312,7 +312,7 @@ Obrigado. Ficamos à disposição para perguntas.
 
 ## Checklist pré-apresentação
 
-- [ ] Projeto compilado (`make`) e executável `garchy` disponível no PATH ou no diretório
+- [ ] Projeto compilado (`make`) e executável `projetoPE` disponível no PATH ou no diretório
 - [ ] Terminal com fonte legível no projetor (mínimo 14pt)
 - [ ] README.md disponível no diretório para usar na demo ao vivo
 - [ ] Relatório técnico aberto em segundo plano para mostrar as tabelas
@@ -320,4 +320,4 @@ Obrigado. Ficamos à disposição para perguntas.
 
 ---
 
-*Arquivo gerado em 2026-11-05 · GarchY / MCTA028-15 · UFABC 2026.3*
+*Arquivo gerado em 2026-11-05 · projetoPE / MCTA028-15 · UFABC 2026.3*
